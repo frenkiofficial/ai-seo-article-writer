@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI SEO Article Writer &amp; Analyzer — Interactive Demo</title>
+<meta name="description" content="Type a topic and a keyword, get a structured sample article with a real SEO score, readability check and concrete fixes. Interactive demo by Aqua Ter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span class="brand-name">Aqua Ter <span class="brand-sep">·</span> SEO Article Studio</span>
+    </div>
+    <span class="badge">Interactive demo · Sample data</span>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>Turn a topic into a search-ready article.</h1>
+    <p class="lede">Type a topic and your main keyword. The writer drafts a structured article — title, meta description, sections, FAQ — then the analyzer scores it on length, keyword density and readability, and tells you exactly what to fix.</p>
+  </section>
+
+  <div class="layout">
+    <aside class="col-side">
+      <section class="card" aria-labelledby="briefTitle">
+        <h2 id="briefTitle">Your brief</h2>
+
+        <label class="field">
+          <span class="field-label">Topic</span>
+          <input id="topicInput" type="text" placeholder="e.g. Best indoor plants for beginners" autocomplete="off">
+          <span class="field-error" id="topicError" role="alert"></span>
+        </label>
+
+        <label class="field">
+          <span class="field-label">Main keyword</span>
+          <input id="keywordInput" type="text" placeholder="e.g. indoor plants" autocomplete="off">
+          <span class="field-hint">One phrase — the words you want the page to rank for.</span>
+          <span class="field-error" id="keywordError" role="alert"></span>
+        </label>
+
+        <div class="field">
+          <span class="field-label" id="lengthLabel">Article length</span>
+          <div class="seg" id="lengthSeg" role="group" aria-labelledby="lengthLabel">
+            <button type="button" data-value="short">Short<span>400–600 words</span></button>
+            <button type="button" data-value="medium" class="active">Medium<span>700–1,000 words</span></button>
+            <button type="button" data-value="long">Long<span>1,050–1,400 words</span></button>
+          </div>
+        </div>
+
+        <div class="field">
+          <span class="field-label" id="toneLabel">Tone</span>
+          <div class="seg" id="toneSeg" role="group" aria-labelledby="toneLabel">
+            <button type="button" data-value="informative" class="active">Informative</button>
+            <button type="button" data-value="howto">How-to</button>
+            <button type="button" data-value="persuasive">Persuasive</button>
+          </div>
+        </div>
+
+        <button id="generateBtn" class="btn-primary" type="button">Write &amp; analyze article</button>
+
+        <div class="samples">
+          <span class="samples-label">Try a sample:</span>
+          <button type="button" class="sample-chip" data-sample="0">🪴 Indoor plants</button>
+          <button type="button" class="sample-chip" data-sample="1">☕ Pour over coffee</button>
+        </div>
+      </section>
+
+      <section class="card" id="scoreCard" style="display:none" aria-labelledby="scoreTitle">
+        <h2 id="scoreTitle">SEO score</h2>
+        <div class="score-top">
+          <svg class="ring" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Overall SEO score">
+            <circle class="ring-bg" cx="60" cy="60" r="52"></circle>
+            <circle class="ring-fg" id="scoreRingFg" cx="60" cy="60" r="52"></circle>
+          </svg>
+          <div class="score-text">
+            <span class="score-num" id="scoreNum">–</span>
+            <span class="score-den">/ 100</span>
+            <span class="grade" id="scoreGrade">–</span>
+          </div>
+        </div>
+        <ul class="metrics" id="metricList"></ul>
+      </section>
+
+      <section class="card" id="fixCard" style="display:none" aria-labelledby="fixTitle">
+        <h2 id="fixTitle">What to fix</h2>
+        <p class="card-sub">Concrete fixes, in order — each one is calculated from your article, not generic advice.</p>
+        <ul class="suggestions" id="suggestionList"></ul>
+      </section>
+    </aside>
+
+    <section class="col-main">
+      <div class="card article-card" id="articleCard" style="display:none">
+        <div class="toolbar">
+          <div class="stats">
+            <span id="statWords">–</span>
+            <span class="dot" aria-hidden="true">·</span>
+            <span id="statTime">–</span>
+            <span class="dot" aria-hidden="true">·</span>
+            <span id="statKw">–</span>
+          </div>
+          <div class="actions">
+            <button type="button" id="highlightToggle" class="btn-ghost" aria-pressed="false">Highlight keyword</button>
+            <button type="button" id="regenerateBtn" class="btn-ghost">↻ New draft</button>
+            <button type="button" id="copyTextBtn" class="btn-ghost">Copy text</button>
+            <button type="button" id="copyHtmlBtn" class="btn-ghost">Copy HTML</button>
+            <button type="button" id="downloadMdBtn" class="btn-ghost">Download .md</button>
+          </div>
+        </div>
+        <article class="article" id="articleHtml"></article>
+      </div>
+
+      <div class="card empty" id="emptyState">
+        <div class="empty-art" aria-hidden="true">
+          <span class="empty-doc">Aa</span>
+        </div>
+        <h2>Your article will appear here</h2>
+        <p>Enter a topic and a keyword on the left, or tap one of the samples. The draft, the score and the fix list all rebuild from what you type.</p>
+        <p class="empty-note">Everything on this page is sample content for demonstration — the article is generated from templates, and the score is calculated live from that draft.</p>
+      </div>
+
+      <details class="card how">
+        <summary>How the score works</summary>
+        <p>The overall score is a weighted average of seven checks: article length (20%), keyword density (20%), readability (20%), SEO title (10%), meta description (10%), keyword in subheadings (10%) and keyword in the first 100 words (10%).</p>
+        <ul>
+          <li><strong>Length</strong> — inside the target range for the chosen length (short 400–600, medium 700–1,000, long 1,050–1,400 words).</li>
+          <li><strong>Keyword density</strong> — 1.0–2.0% of all words. Below that, search engines may miss the topic; above it, the text reads as stuffed.</li>
+          <li><strong>Readability</strong> — Flesch reading ease, 60–70 is plain English. Calculated from real sentence and syllable counts.</li>
+          <li><strong>Title &amp; meta</strong> — title 40–60 characters with the keyword; meta description 120–160 characters.</li>
+        </ul>
+      </details>
+    </section>
+  </div>
+</main>
+
+<footer class="wrap footer">
+  <p><strong>Sample data:</strong> the articles, scores and suggestions on this page are generated examples for demonstration only — not guarantees of search rankings. In a real run, the writer uses your brand voice, your research and your keyword data.</p>
+  <p>Built by <strong>Aqua Ter</strong> · AI article writing &amp; SEO checks · Pricing is agreed after scope is clear — no fixed price upfront.</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
